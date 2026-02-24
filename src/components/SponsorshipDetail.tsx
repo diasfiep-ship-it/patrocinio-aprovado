@@ -5,10 +5,13 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "@/components/ui/hover-card";
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import { useState } from "react";
 
 interface SponsorshipDetailProps {
   request: SponsorshipRequest;
@@ -49,6 +52,8 @@ const parecerLabelColor = (value: string | null) => {
 };
 
 const SponsorshipDetail = ({ request, onFieldChange }: SponsorshipDetailProps) => {
+  const [openParecer, setOpenParecer] = useState<{ label: string; text: string } | null>(null);
+
   const formatCurrency = (value: string) => {
     const numbers = value.replace(/\D/g, "");
     if (!numbers) return "";
@@ -115,24 +120,17 @@ const SponsorshipDetail = ({ request, onFieldChange }: SponsorshipDetailProps) =
                       {parsed.text}
                     </Badge>
                   ) : (
-                    <HoverCard openDelay={0} closeDelay={120}>
-                      <HoverCardTrigger asChild>
-                        <Badge
-                          variant="outline"
-                          className={`text-[10px] px-2 py-0.5 font-semibold cursor-pointer ${
-                            parsed.type === "favoravel"
-                              ? "bg-success/15 text-success border border-success/30"
-                              : "bg-destructive/15 text-destructive border border-destructive/30"
-                          }`}
-                        >
-                          {parsed.label}
-                        </Badge>
-                      </HoverCardTrigger>
-                      <HoverCardContent className="text-sm w-[24rem] max-w-[calc(100vw-2rem)] max-h-60 overflow-y-auto" side="top" align="end" sideOffset={8}>
-                        <p className="font-semibold text-xs text-muted-foreground mb-1">Parecer {label}</p>
-                        <p className="text-sm leading-relaxed">{parsed.tooltip || value || "-"}</p>
-                      </HoverCardContent>
-                    </HoverCard>
+                    <Badge
+                      variant="outline"
+                      className={`text-[10px] px-2 py-0.5 font-semibold cursor-pointer ${
+                        parsed.type === "favoravel"
+                          ? "bg-success/15 text-success border border-success/30"
+                          : "bg-destructive/15 text-destructive border border-destructive/30"
+                      }`}
+                      onClick={() => setOpenParecer({ label: `Parecer ${label}`, text: parsed.tooltip || value || "-" })}
+                    >
+                      {parsed.label}
+                    </Badge>
                   )}
                 </div>
               );
@@ -192,6 +190,16 @@ const SponsorshipDetail = ({ request, onFieldChange }: SponsorshipDetailProps) =
           onLabelChange={(v) => onFieldChange("parecer_label", v)}
         />
       </div>
+
+      <Dialog open={!!openParecer} onOpenChange={(open) => !open && setOpenParecer(null)}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>{openParecer?.label}</DialogTitle>
+            <DialogDescription className="sr-only">Texto completo do parecer</DialogDescription>
+          </DialogHeader>
+          <p className="text-sm leading-relaxed text-card-foreground whitespace-pre-line">{openParecer?.text}</p>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
