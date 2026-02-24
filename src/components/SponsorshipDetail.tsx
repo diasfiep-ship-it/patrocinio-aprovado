@@ -118,7 +118,7 @@ const SponsorshipDetail = ({ request, onFieldChange }: SponsorshipDetailProps) =
             <InfoItem icon={MapPin} label="Cidade" value={request.cidade || "-"} />
             <InfoItem icon={Clock} label="Data da Ação" value={request.data_acao || "-"} />
             <InfoItem icon={CalendarDays} label="Mês da Ação" value={request.mes_acao || "-"} />
-            <InfoItem icon={DollarSign} label="Valor Solicitado" value={formatCurrencyDisplay(request.valor_solicitado)} />
+            <InfoItem icon={DollarSign} label="Valor Solicitado" value={request.valor_solicitado || "-"} />
           </div>
         </div>
 
