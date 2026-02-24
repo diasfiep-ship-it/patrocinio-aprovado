@@ -51,9 +51,30 @@ const parecerLabelColor = (value: string | null) => {
   return "bg-secondary text-secondary-foreground";
 };
 
+const formatDateDisplay = (value: string | null) => {
+  if (!value || value === "-") return "-";
+  // Try parsing Excel serial number
+  const num = Number(value);
+  if (!isNaN(num) && num > 30000 && num < 60000) {
+    const date = new Date((num - 25569) * 86400000);
+    return date.toLocaleDateString("pt-BR");
+  }
+  // Try ISO / standard date
+  const d = new Date(value);
+  if (!isNaN(d.getTime())) return d.toLocaleDateString("pt-BR");
+  return value;
+};
+
+const formatCurrencyDisplay = (value: string | null) => {
+  if (!value || value === "-") return "-";
+  const cleaned = value.replace(/[^\d.,]/g, "").replace(",", ".");
+  const num = parseFloat(cleaned);
+  if (isNaN(num)) return value;
+  return num.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+};
+
 const SponsorshipDetail = ({ request, onFieldChange }: SponsorshipDetailProps) => {
   const [openParecer, setOpenParecer] = useState<{ label: string; text: string } | null>(null);
-
   const formatCurrency = (value: string) => {
     const numbers = value.replace(/\D/g, "");
     if (!numbers) return "";
@@ -93,11 +114,11 @@ const SponsorshipDetail = ({ request, onFieldChange }: SponsorshipDetailProps) =
         <div className="lg:col-span-2 bg-card rounded border border-border shadow-sm p-4">
           <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-3">Dados da Solicitação</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6">
-            <InfoItem icon={CalendarDays} label="Data Recebimento" value={request.data_recebimento || "-"} />
+            <InfoItem icon={CalendarDays} label="Data Recebimento" value={formatDateDisplay(request.data_recebimento)} />
             <InfoItem icon={MapPin} label="Cidade" value={request.cidade || "-"} />
             <InfoItem icon={Clock} label="Data da Ação" value={request.data_acao || "-"} />
             <InfoItem icon={CalendarDays} label="Mês da Ação" value={request.mes_acao || "-"} />
-            <InfoItem icon={DollarSign} label="Valor Solicitado" value={request.valor_solicitado || "-"} />
+            <InfoItem icon={DollarSign} label="Valor Solicitado" value={formatCurrencyDisplay(request.valor_solicitado)} />
           </div>
         </div>
 
