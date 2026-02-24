@@ -66,20 +66,20 @@ const SponsorshipDetail = ({ request, onFieldChange }: SponsorshipDetailProps) =
       {/* Title + Event Description */}
       <div className="bg-card rounded border border-border shadow-sm p-5">
         <div className="flex flex-col lg:flex-row lg:items-start gap-4">
-          <div className="flex-1 min-w-0">
+          <div className="shrink-0">
             <h2 className="text-xl font-bold text-card-foreground">{request.solicitante}</h2>
             {request.numero_pv && (
               <span className="text-[10px] text-muted-foreground font-mono">{request.numero_pv}</span>
             )}
             <p className="text-sm text-muted-foreground mt-0.5">{request.objeto}</p>
           </div>
-          <div className="lg:w-80 shrink-0">
+          <div className="flex-1 min-w-0">
             <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-1 block">Descrição do Evento</label>
             <Textarea
               placeholder="Descreva o evento aqui..."
               value={request.descricao_evento || ""}
               onChange={(e) => onFieldChange("descricao_evento", e.target.value)}
-              className="text-sm min-h-[80px] resize-y"
+              className="text-sm min-h-[100px] resize-y w-full"
             />
           </div>
         </div>
