@@ -11,6 +11,7 @@ export function useSponsorshipRequests() {
     const { data, error } = await supabase
       .from("sponsorship_requests")
       .select("*")
+      .order("sort_order", { ascending: true })
       .order("created_at", { ascending: true });
 
     if (error) {
@@ -105,7 +106,10 @@ export function useSponsorshipRequests() {
       return;
     }
 
-    const rows = uniqueNew.map((r) => ({
+    // Get current max sort_order
+    const maxOrder = requests.reduce((max, r) => Math.max(max, (r as any).sort_order || 0), 0);
+
+    const rows = uniqueNew.map((r, idx) => ({
       numero_pv: r.numero_pv || null,
       solicitante: r.solicitante,
       objeto: r.objeto,
@@ -126,6 +130,7 @@ export function useSponsorshipRequests() {
       parecer_unisenai: r.parecer_unisenai || null,
       parecer_label: r.parecer_label || "",
       valor_oferecido: r.valor_oferecido || "",
+      sort_order: maxOrder + idx + 1,
     }));
 
     const { error } = await supabase.from("sponsorship_requests").insert(rows);

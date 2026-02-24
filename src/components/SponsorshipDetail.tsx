@@ -1,6 +1,7 @@
 import { CalendarDays, MapPin, Clock, DollarSign, History, Handshake } from "lucide-react";
 import type { SponsorshipRequest } from "@/data/sponsorshipRequests";
 import ParecerCard from "./ParecerCard";
+import FileUploadSection from "./FileUploadSection";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
@@ -196,6 +197,9 @@ const SponsorshipDetail = ({ request, onFieldChange }: SponsorshipDetailProps) =
           <p className="text-sm text-card-foreground leading-relaxed">{request.contrapartidas || "-"}</p>
         </div>
       </div>
+
+      {/* File attachments */}
+      <FileUploadSection requestId={request.id} />
 
       {/* Main pareceres */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">

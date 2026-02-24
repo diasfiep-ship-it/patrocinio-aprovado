@@ -14,6 +14,41 @@ export type Database = {
   }
   public: {
     Tables: {
+      request_attachments: {
+        Row: {
+          created_at: string
+          file_name: string
+          file_path: string
+          file_type: string | null
+          id: string
+          request_id: string
+        }
+        Insert: {
+          created_at?: string
+          file_name: string
+          file_path: string
+          file_type?: string | null
+          id?: string
+          request_id: string
+        }
+        Update: {
+          created_at?: string
+          file_name?: string
+          file_path?: string
+          file_type?: string | null
+          id?: string
+          request_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "request_attachments_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "sponsorship_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       sponsorship_requests: {
         Row: {
           cidade: string | null
@@ -37,6 +72,7 @@ export type Database = {
           parecer_sti: string | null
           parecer_unisenai: string | null
           solicitante: string
+          sort_order: number | null
           updated_at: string
           valor_oferecido: string | null
           valor_solicitado: string | null
@@ -63,6 +99,7 @@ export type Database = {
           parecer_sti?: string | null
           parecer_unisenai?: string | null
           solicitante: string
+          sort_order?: number | null
           updated_at?: string
           valor_oferecido?: string | null
           valor_solicitado?: string | null
@@ -89,6 +126,7 @@ export type Database = {
           parecer_sti?: string | null
           parecer_unisenai?: string | null
           solicitante?: string
+          sort_order?: number | null
           updated_at?: string
           valor_oferecido?: string | null
           valor_solicitado?: string | null
