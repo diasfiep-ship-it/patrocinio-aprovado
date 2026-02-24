@@ -1,0 +1,188 @@
+import { CalendarDays, MapPin, Clock, DollarSign, History, Handshake } from "lucide-react";
+import type { SponsorshipRequest } from "@/data/sponsorshipRequests";
+import ParecerCard from "./ParecerCard";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
+
+interface SponsorshipDetailProps {
+  request: SponsorshipRequest;
+  onFieldChange: (field: string, value: string) => void;
+}
+
+const InfoItem = ({ icon: Icon, label, value }: { icon: React.ElementType; label: string; value: string }) => (
+  <div className="flex items-start gap-2.5 py-2">
+    <Icon className="w-4 h-4 text-muted-foreground mt-0.5 shrink-0" />
+    <div>
+      <span className="text-xs text-muted-foreground font-medium uppercase tracking-wide">{label}</span>
+      <p className="text-sm text-card-foreground mt-0.5">{value}</p>
+    </div>
+  </div>
+);
+
+const parseParecerLabel = (value: string | null) => {
+  if (!value || value === "NA" || value === "Aguardando") {
+    return { type: "simple" as const, text: value || "NA" };
+  }
+  // Check if starts with FAVORÁVEL or NÃO FAVORÁVEL
+  const upper = value.toUpperCase().trim();
+  if (upper.startsWith("NÃO FAVORÁVEL") || upper.startsWith("NAO FAVORAVEL")) {
+    const rest = value.replace(/^(NÃO FAVORÁVEL|NAO FAVORAVEL)\s*[-–—]?\s*/i, "").trim();
+    return { type: "nao_favoravel" as const, label: "NÃO FAVORÁVEL", tooltip: rest };
+  }
+  if (upper.startsWith("FAVORÁVEL") || upper.startsWith("FAVORAVEL")) {
+    const rest = value.replace(/^(FAVORÁVEL|FAVORAVEL)\s*[-–—]?\s*/i, "").trim();
+    return { type: "favoravel" as const, label: "FAVORÁVEL", tooltip: rest };
+  }
+  return { type: "simple" as const, text: value };
+};
+
+const parecerLabelColor = (value: string | null) => {
+  if (!value || value === "NA") return "bg-muted text-muted-foreground";
+  if (value === "Aguardando") return "bg-warning/15 text-warning border border-warning/30";
+  return "bg-secondary text-secondary-foreground";
+};
+
+const SponsorshipDetail = ({ request, onFieldChange }: SponsorshipDetailProps) => {
+  const formatCurrency = (value: string) => {
+    const numbers = value.replace(/\D/g, "");
+    if (!numbers) return "";
+    const amount = parseInt(numbers) / 100;
+    return amount.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  };
+
+  const handleCurrencyInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const raw = e.target.value.replace(/\D/g, "");
+    onFieldChange("valor_oferecido", raw);
+  };
+
+  return (
+    <div className="p-4 lg:p-6 space-y-4">
+      {/* Title */}
+      <div className="bg-card rounded border border-border shadow-sm p-5">
+        <h2 className="text-xl font-bold text-card-foreground">{request.solicitante}</h2>
+        {request.numero_pv && (
+          <span className="text-[10px] text-muted-foreground font-mono">{request.numero_pv}</span>
+        )}
+        <p className="text-sm text-muted-foreground mt-0.5">{request.objeto}</p>
+      </div>
+
+      {/* Info grid + small pareceres */}
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
+        <div className="lg:col-span-2 bg-card rounded border border-border shadow-sm p-4">
+          <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-3">Dados da Solicitação</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6">
+            <InfoItem icon={CalendarDays} label="Data Recebimento" value={request.data_recebimento || "-"} />
+            <InfoItem icon={MapPin} label="Cidade" value={request.cidade || "-"} />
+            <InfoItem icon={Clock} label="Data da Ação" value={request.data_acao || "-"} />
+            <InfoItem icon={CalendarDays} label="Mês da Ação" value={request.mes_acao || "-"} />
+            <InfoItem icon={DollarSign} label="Valor Solicitado" value={request.valor_solicitado || "-"} />
+          </div>
+        </div>
+
+        {/* Institutional pareceres with hover */}
+        <div className="bg-card rounded border border-border shadow-sm p-4">
+          <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-3">Pareceres Institucionais</h3>
+          <div className="space-y-2">
+            {[
+              { label: "SESI", value: request.parecer_sesi },
+              { label: "FIEP", value: request.parecer_fiep },
+              { label: "IEL", value: request.parecer_iel },
+              { label: "UNISENAI", value: request.parecer_unisenai },
+            ].map(({ label, value }) => {
+              const parsed = parseParecerLabel(value);
+              return (
+                <div key={label} className="flex items-center justify-between">
+                  <span className="text-xs font-medium text-muted-foreground">{label}</span>
+                  {parsed.type === "simple" ? (
+                    <Badge variant="outline" className={`text-[10px] px-2 py-0.5 font-semibold ${parecerLabelColor(parsed.text)}`}>
+                      {parsed.text}
+                    </Badge>
+                  ) : (
+                    <HoverCard>
+                      <HoverCardTrigger asChild>
+                        <Badge
+                          variant="outline"
+                          className={`text-[10px] px-2 py-0.5 font-semibold cursor-pointer ${
+                            parsed.type === "favoravel"
+                              ? "bg-success/15 text-success border border-success/30"
+                              : "bg-destructive/15 text-destructive border border-destructive/30"
+                          }`}
+                        >
+                          {parsed.label}
+                        </Badge>
+                      </HoverCardTrigger>
+                      {parsed.tooltip && (
+                        <HoverCardContent className="text-sm w-80">
+                          {parsed.tooltip}
+                        </HoverCardContent>
+                      )}
+                    </HoverCard>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Valor oferecido */}
+        <div className="bg-card rounded border border-border shadow-sm p-4">
+          <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-3">Valor de Apoio Proposto</h3>
+          <div className="relative">
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground font-medium">R$</span>
+            <Input
+              type="text"
+              placeholder="0,00"
+              value={request.valor_oferecido ? formatCurrency(request.valor_oferecido) : ""}
+              onChange={handleCurrencyInput}
+              className="pl-10 text-right font-semibold text-lg"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Historico + Contrapartidas */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div className="bg-card rounded border border-border shadow-sm p-4">
+          <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2 flex items-center gap-1.5">
+            <History className="w-3.5 h-3.5" /> Histórico do Pedido
+          </h3>
+          <p className="text-sm text-card-foreground leading-relaxed">{request.historico_pedido || "-"}</p>
+          {request.historico_2025 && (
+            <>
+              <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mt-3 mb-1">Histórico 2025</h4>
+              <p className="text-sm text-card-foreground leading-relaxed">{request.historico_2025}</p>
+            </>
+          )}
+        </div>
+        <div className="bg-card rounded border border-border shadow-sm p-4">
+          <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2 flex items-center gap-1.5">
+            <Handshake className="w-3.5 h-3.5" /> Contrapartidas Oferecidas
+          </h3>
+          <p className="text-sm text-card-foreground leading-relaxed">{request.contrapartidas || "-"}</p>
+        </div>
+      </div>
+
+      {/* Main pareceres */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <ParecerCard title="Parecer STI" content={request.parecer_sti || ""} variant="sti" />
+        <ParecerCard title="Parecer Educação Profissional" content={request.parecer_educacao || ""} variant="educacao" />
+        <ParecerCard
+          title="Parecer Final SENAI"
+          content={request.parecer_final_senai || ""}
+          variant="final"
+          editable
+          onSave={(v) => onFieldChange("parecer_final_senai", v)}
+          label={request.parecer_label || ""}
+          onLabelChange={(v) => onFieldChange("parecer_label", v)}
+        />
+      </div>
+    </div>
+  );
+};
+
+export default SponsorshipDetail;
