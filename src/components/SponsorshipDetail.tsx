@@ -115,7 +115,7 @@ const SponsorshipDetail = ({ request, onFieldChange }: SponsorshipDetailProps) =
                       {parsed.text}
                     </Badge>
                   ) : (
-                    <HoverCard openDelay={100} closeDelay={0}>
+                    <HoverCard openDelay={0} closeDelay={120}>
                       <HoverCardTrigger asChild>
                         <Badge
                           variant="outline"
@@ -128,7 +128,7 @@ const SponsorshipDetail = ({ request, onFieldChange }: SponsorshipDetailProps) =
                           {parsed.label}
                         </Badge>
                       </HoverCardTrigger>
-                      <HoverCardContent className="text-sm w-96 max-h-60 overflow-y-auto" side="left" sideOffset={8}>
+                      <HoverCardContent className="text-sm w-[24rem] max-w-[calc(100vw-2rem)] max-h-60 overflow-y-auto" side="top" align="end" sideOffset={8}>
                         <p className="font-semibold text-xs text-muted-foreground mb-1">Parecer {label}</p>
                         <p className="text-sm leading-relaxed">{parsed.tooltip || value || "-"}</p>
                       </HoverCardContent>
