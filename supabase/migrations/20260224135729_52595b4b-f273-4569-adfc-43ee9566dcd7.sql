@@ -1,0 +1,1 @@
+ALTER TABLE public.sponsorship_requests ADD COLUMN descricao_evento text;

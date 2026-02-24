@@ -41,6 +41,7 @@ export function useSponsorshipRequests() {
         parecer_unisenai: r.parecer_unisenai,
         parecer_label: r.parecer_label,
         valor_oferecido: r.valor_oferecido,
+        descricao_evento: (r as any).descricao_evento || null,
       }))
     );
     setLoading(false);
