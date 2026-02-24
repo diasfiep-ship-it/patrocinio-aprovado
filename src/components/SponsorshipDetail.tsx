@@ -198,9 +198,6 @@ const SponsorshipDetail = ({ request, onFieldChange }: SponsorshipDetailProps) =
         </div>
       </div>
 
-      {/* File attachments */}
-      <FileUploadSection requestId={request.id} />
-
       {/* Main pareceres */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <ParecerCard title="Parecer STI" content={request.parecer_sti || ""} variant="sti" />
@@ -215,6 +212,9 @@ const SponsorshipDetail = ({ request, onFieldChange }: SponsorshipDetailProps) =
           onLabelChange={(v) => onFieldChange("parecer_label", v)}
         />
       </div>
+
+      {/* File attachments */}
+      <FileUploadSection requestId={request.id} />
 
       <Dialog open={!!openParecer} onOpenChange={(open) => !open && setOpenParecer(null)}>
         <DialogContent className="max-w-lg">
