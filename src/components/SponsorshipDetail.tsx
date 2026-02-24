@@ -64,24 +64,22 @@ const SponsorshipDetail = ({ request, onFieldChange }: SponsorshipDetailProps) =
   return (
     <div className="p-4 lg:p-6 space-y-4">
       {/* Title + Event Description */}
-      <div className="bg-card rounded border border-border shadow-sm p-5">
-        <div className="flex flex-col lg:flex-row lg:items-start gap-4">
-          <div className="shrink-0">
-            <h2 className="text-xl font-bold text-card-foreground">{request.solicitante}</h2>
-            {request.numero_pv && (
-              <span className="text-[10px] text-muted-foreground font-mono">{request.numero_pv}</span>
-            )}
-            <p className="text-sm text-muted-foreground mt-0.5">{request.objeto}</p>
-          </div>
-          <div className="flex-1 min-w-0">
-            <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-1 block">Descrição do Evento</label>
-            <Textarea
-              placeholder="Descreva o evento aqui..."
-              value={request.descricao_evento || ""}
-              onChange={(e) => onFieldChange("descricao_evento", e.target.value)}
-              className="text-sm min-h-[100px] resize-y w-full"
-            />
-          </div>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <div className="bg-card rounded border border-border shadow-sm p-5">
+          <h2 className="text-xl font-bold text-card-foreground">{request.solicitante}</h2>
+          {request.numero_pv && (
+            <span className="text-[10px] text-muted-foreground font-mono">{request.numero_pv}</span>
+          )}
+          <p className="text-sm text-muted-foreground mt-0.5">{request.objeto}</p>
+        </div>
+        <div className="lg:col-span-2 bg-card rounded border border-border shadow-sm p-5">
+          <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-1 block">Descrição do Evento</label>
+          <Textarea
+            placeholder="Descreva o evento aqui..."
+            value={request.descricao_evento || ""}
+            onChange={(e) => onFieldChange("descricao_evento", e.target.value)}
+            className="text-sm min-h-[80px] resize-y w-full"
+          />
         </div>
       </div>
 
