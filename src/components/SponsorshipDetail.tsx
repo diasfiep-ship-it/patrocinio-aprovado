@@ -2,6 +2,7 @@ import { CalendarDays, MapPin, Clock, DollarSign, History, Handshake } from "luc
 import type { SponsorshipRequest } from "@/data/sponsorshipRequests";
 import ParecerCard from "./ParecerCard";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import {
   HoverCard,
@@ -62,13 +63,26 @@ const SponsorshipDetail = ({ request, onFieldChange }: SponsorshipDetailProps) =
 
   return (
     <div className="p-4 lg:p-6 space-y-4">
-      {/* Title */}
+      {/* Title + Event Description */}
       <div className="bg-card rounded border border-border shadow-sm p-5">
-        <h2 className="text-xl font-bold text-card-foreground">{request.solicitante}</h2>
-        {request.numero_pv && (
-          <span className="text-[10px] text-muted-foreground font-mono">{request.numero_pv}</span>
-        )}
-        <p className="text-sm text-muted-foreground mt-0.5">{request.objeto}</p>
+        <div className="flex flex-col lg:flex-row lg:items-start gap-4">
+          <div className="flex-1 min-w-0">
+            <h2 className="text-xl font-bold text-card-foreground">{request.solicitante}</h2>
+            {request.numero_pv && (
+              <span className="text-[10px] text-muted-foreground font-mono">{request.numero_pv}</span>
+            )}
+            <p className="text-sm text-muted-foreground mt-0.5">{request.objeto}</p>
+          </div>
+          <div className="lg:w-80 shrink-0">
+            <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-1 block">Descrição do Evento</label>
+            <Textarea
+              placeholder="Descreva o evento aqui..."
+              value={request.descricao_evento || ""}
+              onChange={(e) => onFieldChange("descricao_evento", e.target.value)}
+              className="text-sm min-h-[80px] resize-y"
+            />
+          </div>
+        </div>
       </div>
 
       {/* Info grid + small pareceres */}
@@ -116,11 +130,10 @@ const SponsorshipDetail = ({ request, onFieldChange }: SponsorshipDetailProps) =
                           {parsed.label}
                         </Badge>
                       </HoverCardTrigger>
-                      {parsed.tooltip && (
-                        <HoverCardContent className="text-sm w-80">
-                          {parsed.tooltip}
-                        </HoverCardContent>
-                      )}
+                      <HoverCardContent className="text-sm w-96 max-h-60 overflow-y-auto" side="left">
+                        <p className="font-semibold text-xs text-muted-foreground mb-1">Parecer {label}</p>
+                        <p className="text-sm leading-relaxed">{value || "-"}</p>
+                      </HoverCardContent>
                     </HoverCard>
                   )}
                 </div>

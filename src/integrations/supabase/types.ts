@@ -21,6 +21,7 @@ export type Database = {
           created_at: string
           data_acao: string | null
           data_recebimento: string | null
+          descricao_evento: string | null
           historico_2025: string | null
           historico_pedido: string | null
           id: string
@@ -46,6 +47,7 @@ export type Database = {
           created_at?: string
           data_acao?: string | null
           data_recebimento?: string | null
+          descricao_evento?: string | null
           historico_2025?: string | null
           historico_pedido?: string | null
           id?: string
@@ -71,6 +73,7 @@ export type Database = {
           created_at?: string
           data_acao?: string | null
           data_recebimento?: string | null
+          descricao_evento?: string | null
           historico_2025?: string | null
           historico_pedido?: string | null
           id?: string

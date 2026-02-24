@@ -20,4 +20,5 @@ export interface SponsorshipRequest {
   parecer_unisenai: string | null;
   parecer_label: string | null;
   valor_oferecido: string | null;
+  descricao_evento: string | null;
 }
